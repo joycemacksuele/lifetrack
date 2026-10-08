@@ -13,7 +13,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public record HabitEntry(
         // A missing id should give 400
         @NotNull
-
         UUID id,
         // A missing date can be allowed?
         LocalDate date,

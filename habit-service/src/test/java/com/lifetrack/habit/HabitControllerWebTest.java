@@ -5,6 +5,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+
+import java.time.LocalDate;
+import java.util.UUID;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -29,10 +33,14 @@ class HabitControllerWebTest {
 	@MockitoBean
 	private HabitService service;
 
+	HabitEntry entry(UUID id, String type) {
+		return new HabitEntry(id, LocalDate.of(2026, 10, 4), type);
+	}
 
 	@Test
 	void postNewEntryReturns201() throws Exception {
-		when(service.ping()).thenReturn("Hello");
+		// TODO search how to use any()
+		when(service.habitEntry(entry(UUID.randomUUID(), "chocolate"))).thenReturn(HabitService.AddEntry.CREATED);
 		assertThat(mockMvc.perform(post("/habits")).andExpect(status().isCreated()));
 	}
 }

@@ -14,13 +14,7 @@ class HabitControllerTests {
 	private final HabitController controller = new HabitController(new HabitService());
 
 	HabitEntry entry(String type) {
-		UUID id = UUID.randomUUID();
-		return new HabitEntry(id, LocalDate.of(2026, 10, 4), type);
-	}
-
-	@Test
-	void controllerIsAlive() {
-		assertThat(controller.ping()).isEqualTo("Habit service is alive");
+		return new HabitEntry(UUID.randomUUID(), LocalDate.of(2026, 10, 4), type);
 	}
 
 	@Test

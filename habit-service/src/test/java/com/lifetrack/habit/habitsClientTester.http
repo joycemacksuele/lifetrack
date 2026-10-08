@@ -1,0 +1,20 @@
+### First one should return 201 CREATED, second one should return 200 OK since it already exists
+# curl -X POST localhost:8080/habits -H "Content-Type: application/json" -d '{"id":"11111111-1111-1111-1111-111111111111","date":"2026-10-04","type":"gym"}' -i
+POST localhost:8080/habits
+Content-Type: application/json
+
+{
+  "id": "11111111-1111-1111-1111-111111111111",
+  "date": "2026-10-04",
+  "type": "gym"
+}
+
+### Third one
+POST localhost:8080/habits
+Content-Type: application/json
+
+{
+  "id": "11111111-1111-1111-1111-111111111111",
+  "date": "2026-10-04",
+  "type": "cookie"
+}

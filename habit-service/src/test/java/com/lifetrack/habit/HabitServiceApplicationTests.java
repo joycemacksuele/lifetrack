@@ -39,9 +39,4 @@ class HabitServiceApplicationTests {
 		// This proves Spring started the whole application context and managed to create and inject your controller bean
 		assertThat(controller).isNotNull();
 	}
-
-	@Test
-	void controllerIsAlive() throws Exception {
-		assertThat(controller.ping()).isEqualTo("Habit service is alive");
-	}
 }

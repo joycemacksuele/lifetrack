@@ -1,32 +1,43 @@
 package com.lifetrack.habit;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.*;
 
 @Service
 public class HabitService {
 
-    public String ping() {
-        return "Habit service is alive";
+    private static final Logger log = LoggerFactory.getLogger(HabitService.class);
+    // Just for now to study data types and BigO. Later on I add a database.
+    private final SaveEntry mapEntries = new SaveEntry();
+
+    enum AddEntry {
+        CREATED,
+        DUPLICATED,
+        CONFLICT// todo find better name
     }
 
-    // 200 OK (or 204 No Content): if the request successfully updates an existing resource.
-    // 201 Created: if the request successfully creates a brand-new resource.
-    @PostMapping()
-    ResponseEntity<HabitEntry> habitEntry(@RequestBody HabitEntry entry) {
-        // ResponseEntity will also matter for idempotency later.
-        // If the same event arrives twice, you might return 201 the first time and 200 for the duplicate,
-        // and that decision at runtime is exactly what @ResponseStatus can't do.
+    AddEntry habitEntry(HabitEntry entry) {
+        // returns null if there was no mapping for the key (so we could add a new key),
+        // otherwise the previous value associated with the specified key is returned (so it existed already)
+        HabitEntry previousEntryValue = mapEntries.addIfAbsent(entry);
 
-        // - ResponseEntity.ok(...) gives 200
-        // - ResponseEntity.created(uri) gives 201 (and requires a URI for the Location header)
-        // - ResponseEntity.status(HttpStatus.X) you pick the code yourself
-        
-        return ResponseEntity.status(HttpStatus.CREATED).body(entry);
-        // A proper 201 should also include a Location header pointing at the new resource (like /habits/42),
-        // but you have no ID yet, so skip that for now. It becomes relevant when you add the database.
+        if (previousEntryValue == null) {
+            System.out.println("JOYCE CREATED" + mapEntries.mapToString());
+
+            // options: we have a new id with a new value or a new id but duplicated value (which is ok)
+            return AddEntry.CREATED;
+        }
+
+        // If values are the same, we have a duplicated id and data (entry was not added to map)
+        if (previousEntryValue.equals(entry)) {
+            System.out.println("JOYCE DUPLICATED" + mapEntries.mapToString());
+            // todo why this log down below does not log while testing?
+            return AddEntry.DUPLICATED;
+        }
+
+        // If values are not the same, we have a duplicated id with different data (entry was not added to map)
+        System.out.println("JOYCE CONFLICT" + mapEntries.mapToString());
+        return AddEntry.CONFLICT;
     }
-
 }

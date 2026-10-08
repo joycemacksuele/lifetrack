@@ -41,5 +41,12 @@ public class SaveEntry {
     //        200 if the same id arrives with the same content
     //        409 Conflict if the same id arrives with different content
 
-    ConcurrentHashMap<UUID, HabitEntry> entries;
+    private final ConcurrentHashMap<UUID, HabitEntry> entries = new ConcurrentHashMap<>();
+
+    public HabitEntry addIfAbsent(HabitEntry entry) {
+        return entries.putIfAbsent(entry.id(), entry);
+    }
+    public String mapToString() {
+        return entries.toString();
+    }
 }
